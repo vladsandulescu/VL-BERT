@@ -97,7 +97,7 @@ TRAIN:
   OPTIMIZER: 'AdamW'
   CLIP_GRAD_NORM: 1.0
   GRAD_ACCUMULATE_STEPS: 2
-  LR: 8.00e-7
+  LR: 6.25e-7
   LR_SCHEDULE: 'triangle'
   WD: 0.0001
   WARMUP: true
