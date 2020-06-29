@@ -65,8 +65,10 @@ class HMDataset(Dataset):
 
         self.data_path = data_path
         self.root_path = root_path
-        self.image_set = image_set
-        self.precomputed_box_files = os.path.join(data_path, precomputed_boxes[image_set])
+        self.image_sets = [iset.strip() for iset in image_set.split('+')]
+        self.precomputed_box_files = [
+            os.path.join(data_path, precomputed_boxes[iset])
+            for iset in self.image_sets]
         self.box_bank = {}
         self.transform = transform
         self.cache_mode = cache_mode
@@ -174,7 +176,13 @@ class HMDataset(Dataset):
 
         return group_ids
 
-    def load_precomputed_boxes(self, box_file):
+    def load_precomputed_boxes(self, box_files):
+        data = []
+        for box_file in box_files:
+            data.extend(self.load_precomputed_boxes_from_file(box_file))
+        return data
+
+    def load_precomputed_boxes_from_file(self, box_file):
         if box_file in self.box_bank:
             return self.box_bank[box_file]
         else:
@@ -195,7 +203,7 @@ class HMDataset(Dataset):
                     in_data.append(idb)
             self.box_bank[box_file] = in_data
 
-            # if self.image_set == 'train':
+            # if 'test' not in self.image_sets:
             #     return in_data[:16]
             # else:
             return in_data
