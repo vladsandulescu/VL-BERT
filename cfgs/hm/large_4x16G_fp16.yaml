@@ -18,7 +18,7 @@ DATASET:
   APPEND_INDEX: false
   DATASET_PATH: './../../data'
   ROOT_PATH: './'
-  TRAIN_IMAGE_SET: 'train'
+  TRAIN_IMAGE_SET: 'train+dev'
   VAL_IMAGE_SET: 'dev'
   TEST_IMAGE_SET: 'test'
   ADD_IMAGE_AS_A_BOX: true
