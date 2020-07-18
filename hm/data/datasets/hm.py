@@ -203,9 +203,7 @@ class HMDataset(Dataset):
                     in_data.append(idb)
             self.box_bank[box_file] = in_data
 
-            # if 'test' not in self.image_sets:
-            #     return in_data[:16]
-            # else:
+            # return np.random.choice(in_data, 16)
             return in_data
 
     def __len__(self):
