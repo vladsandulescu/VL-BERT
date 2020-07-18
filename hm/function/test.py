@@ -39,8 +39,8 @@ def test_net(args, config, ckpt_path=None, save_path=None, save_name=None):
         save_path = test_output_path
     if not os.path.exists(save_path):
         os.makedirs(save_path)
-    shutil.copy2(ckpt_path,
-                 os.path.join(save_path, '{}_test_ckpt_{}.model'.format(config.MODEL_PREFIX, config.DATASET.TASK)))
+    # shutil.copy2(ckpt_path,
+    #              os.path.join(save_path, '{}_test_ckpt_{}.model'.format(config.MODEL_PREFIX, config.DATASET.TASK)))
 
     # get network
     model = eval(config.MODULE)(config)
