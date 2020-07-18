@@ -20,6 +20,7 @@ from common.metrics import hm_metrics
 from common.callbacks.batch_end_callbacks.speedometer import Speedometer
 from common.callbacks.epoch_end_callbacks.validation_monitor import ValidationMonitor
 from common.callbacks.epoch_end_callbacks.checkpoint import Checkpoint
+from common.callbacks.epoch_end_callbacks.test_monitor import TestMonitor
 from common.lr_scheduler import WarmupMultiStepLR
 from common.nlp.bert.optimization import AdamW, WarmupLinearSchedule
 from hm.data.build import make_dataloader, build_dataset, build_transforms
@@ -238,7 +239,8 @@ def train_net(args, config):
     # epoch end callbacks
     epoch_end_callbacks = []
     if (rank is None) or (rank == 0):
-        epoch_end_callbacks = [Checkpoint(model_prefix, config.CHECKPOINT_FREQUENT)]
+        epoch_end_callbacks = [Checkpoint(model_prefix, config.CHECKPOINT_FREQUENT),
+                               TestMonitor(model_prefix, config.CHECKPOINT_FREQUENT, args, config)]
     validation_monitor = ValidationMonitor(do_validation, val_loader, val_metrics,
                                            host_metric_name='AUROC',
                                            label_index_in_batch=config.DATASET.LABEL_INDEX_IN_BATCH)
