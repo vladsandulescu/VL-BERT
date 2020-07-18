@@ -320,6 +320,9 @@ def train_net(args, config):
           rank=rank, batch_end_callbacks=batch_end_callbacks, epoch_end_callbacks=epoch_end_callbacks,
           writer=writer, validation_monitor=validation_monitor, fp16=config.TRAIN.FP16,
           clip_grad_norm=config.TRAIN.CLIP_GRAD_NORM,
-          gradient_accumulate_steps=config.TRAIN.GRAD_ACCUMULATE_STEPS)
+          gradient_accumulate_steps=config.TRAIN.GRAD_ACCUMULATE_STEPS,
+          cudnn_benchmark=torch.backends.cudnn.benchmark,
+          cudnn_deterministic=torch.backends.cudnn.deterministic,
+          cudnn_enabled=torch.backends.cudnn.enabled)
 
     return rank, model
