@@ -69,12 +69,20 @@ def train(net,
           validation_monitor=None,
           fp16=False,
           clip_grad_norm=-1,
-          gradient_accumulate_steps=1):
+          gradient_accumulate_steps=1,
+          cudnn_benchmark=False,
+          cudnn_deterministic=False,
+          cudnn_enabled=True):
 
     assert isinstance(gradient_accumulate_steps, int) and gradient_accumulate_steps >= 1
 
     for epoch in range(begin_epoch, end_epoch):
         print('PROGRESS: %.2f%%' % (100.0 * epoch / end_epoch))
+
+        # set cudnn options here also because they may have been changed running the test_monitor at the end of epoch
+        torch.backends.cudnn.benchmark = cudnn_benchmark
+        torch.backends.cudnn.deterministic = cudnn_deterministic
+        torch.backends.cudnn.enabled = cudnn_enabled
 
         # set epoch as random seed of sampler while distributed training
         if train_sampler is not None and hasattr(train_sampler, 'set_epoch'):
