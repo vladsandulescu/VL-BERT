@@ -243,7 +243,9 @@ def train_net(args, config):
                                TestMonitor(model_prefix, config.CHECKPOINT_FREQUENT, args, config)]
     validation_monitor = ValidationMonitor(do_validation, val_loader, val_metrics,
                                            host_metric_name='AUROC',
-                                           label_index_in_batch=config.DATASET.LABEL_INDEX_IN_BATCH)
+                                           label_index_in_batch=config.DATASET.LABEL_INDEX_IN_BATCH,
+                                           prefix=model_prefix, frequent=config.CHECKPOINT_FREQUENT,
+                                           args=args, config=config)
 
     # optimizer initial lr before
     for group in optimizer.param_groups:
