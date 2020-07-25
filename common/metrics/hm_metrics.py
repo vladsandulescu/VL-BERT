@@ -26,10 +26,10 @@ class Accuracy(EvalMetric):
 
     def update(self, outputs):
         with torch.no_grad():
-            logits = outputs['label_logits']
+            probs = outputs['label_probs']
             label = outputs['label']
-            self.sum_metric += float((logits.argmax(dim=1) == label).sum().item())
-            self.num_inst += logits.shape[0]
+            self.sum_metric += float((probs.argmax(dim=1) == label).sum().item())
+            self.num_inst += probs.shape[0]
 
 
 class ClsLoss(EvalMetric):
@@ -47,11 +47,11 @@ class AUROC(EvalMetric):
         super(AUROC, self).__init__('AUROC', allreduce=allreduce, num_replicas=num_replicas)
 
         self.eoe_metric = True
-        self.outputs = {'logits': [], 'label': []}
+        self.outputs = {'probs': [], 'label': []}
 
     def update(self, outputs):
         with torch.no_grad():
-            self.outputs['logits'].extend(outputs['label_logits'].detach().cpu().tolist())
+            self.outputs['probs'].extend(outputs['label_probs'].detach().cpu().tolist())
             self.outputs['label'].extend(outputs['label'].detach().cpu().numpy())
 
             # we calculate AUC on epoch callback on accumulated results,
@@ -60,5 +60,5 @@ class AUROC(EvalMetric):
     def update_eoe(self):
         with torch.no_grad():
             self.sum_metric = torch.tensor(roc_auc_score(self.outputs['label'],
-                                                          np.array(self.outputs['logits'])[:, 1]))
+                                                          np.array(self.outputs['probs'])[:, 1]))
             self.num_inst = torch.tensor(1.)
