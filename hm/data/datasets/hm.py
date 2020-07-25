@@ -25,6 +25,7 @@ TRAIN_VAL_FIELDNAMES = ["id", "img", "label", "text", "img_id", "img_h", "img_w"
 TEST_FIELDNAMES = ["id", "img", "text", "img_id", "img_h", "img_w", "objects_id", "objects_conf",
               "attrs_id", "attrs_conf", "num_boxes", "boxes", "features"]
 
+
 class HMDataset(Dataset):
     def __init__(self, image_set, root_path, data_path, answer_vocab_file, use_imdb=True,
                  with_precomputed_visual_feat=False, boxes="10-100ada",
@@ -91,7 +92,8 @@ class HMDataset(Dataset):
 
         self.database = self.load_precomputed_boxes(self.precomputed_box_files)
         if self.aspect_grouping:
-            self.group_ids = self.group_aspect(self.database)
+            # self.group_ids = self.group_aspect(self.database)
+            self.group_ids = self.group_benign(self.database)
 
     @property
     def data_names(self):
@@ -176,6 +178,23 @@ class HMDataset(Dataset):
 
         return group_ids
 
+    @staticmethod
+    def group_benign(database):
+        print('benign grouping...')
+        t = time.time()
+
+        # batch size is assumed to be 4
+        bs = 4
+
+        sorted_ids = np.argsort([idb['text'] for idb in database])
+        groups = np.repeat(np.arange(len(database)/bs), bs)
+        group_ids = np.zeros(len(database))
+        group_ids[sorted_ids] = groups
+
+        print('Done (t={:.2f}s)'.format(time.time() - t))
+
+        return torch.LongTensor(group_ids)
+
     def load_precomputed_boxes(self, box_files):
         data = []
         for box_file in box_files:
@@ -203,7 +222,9 @@ class HMDataset(Dataset):
                     in_data.append(idb)
             self.box_bank[box_file] = in_data
 
-            # return np.random.choice(in_data, 16)
+            # if self.image_sets.__contains__('train'):
+            #     return np.random.choice(in_data, 16)
+            # else:
             return in_data
 
     def __len__(self):
