@@ -59,7 +59,7 @@ def test_net(args, config, ckpt_path=None, save_path=None, save_name=None):
 
     # test
     image_ids = []
-    predicted_logits = []
+    predicted_probs = []
     model.eval()
     cur_id = 0
     for nbatch, batch in zip(trange(len(test_loader)), test_loader):
@@ -68,14 +68,12 @@ def test_net(args, config, ckpt_path=None, save_path=None, save_name=None):
         image_ids.extend([test_database[id]['img'] for id in range(cur_id, min(cur_id + bs, len(test_database)))])
         batch = to_cuda(batch)
         output = model(*batch)
-        predicted_logits.extend(output['label_logits'].detach().cpu().tolist())
+        predicted_probs.extend(output['label_probs'].detach().cpu().tolist())
         cur_id += bs
 
-    predicted_logits = np.array(predicted_logits)
+    predicted_probs = np.array(predicted_probs)
     result = [{'id': id.replace('img/', '').replace('.png', ''), 'proba': np.round(proba, 4), 'label': label}
-              for id, proba, label in zip(image_ids,
-                                          predicted_logits[:, 1],
-                                          np.argmax(predicted_logits, axis=1))]
+              for id, proba, label in zip(image_ids, predicted_probs[:, 1], np.argmax(predicted_probs, axis=1))]
 
     cfg_name = os.path.splitext(os.path.basename(args.cfg))[0]
     result_csv_path = os.path.join(save_path, '{}_hm2_{}.csv'.format(cfg_name if save_name is None else save_name,
@@ -86,5 +84,5 @@ def test_net(args, config, ckpt_path=None, save_path=None, save_name=None):
         writer.writeheader()
         for data in result:
             writer.writerow(data)
-    print('result csv saved to {}.'.format(result_csv_path))
+    print('Test result csv saved to {}.'.format(result_csv_path))
     return result_csv_path

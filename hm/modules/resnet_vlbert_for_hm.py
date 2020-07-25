@@ -131,7 +131,7 @@ class ResNetVLBERT(Module):
         # loss
         cls_loss = F.cross_entropy(logits, label)
 
-        outputs.update({'label_logits': F.softmax(logits, -1),
+        outputs.update({'label_probs': F.softmax(logits, dim=1),
                         'label': label,
                         'cls_loss': cls_loss})
 
@@ -197,6 +197,6 @@ class ResNetVLBERT(Module):
 
         logits = self.final_mlp(pooled_rep)
 
-        outputs.update({'label_logits': F.softmax(logits, -1)})
+        outputs.update({'label_probs': F.softmax(logits, dim=1)})
 
         return outputs

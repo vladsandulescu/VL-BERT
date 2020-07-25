@@ -3,7 +3,8 @@ import shutil
 
 
 class ValidationMonitor(object):
-    def __init__(self, val_func, val_loader, metrics, host_metric_name='Acc', label_index_in_batch=-1):
+    def __init__(self, val_func, val_loader, metrics, host_metric_name='Acc', label_index_in_batch=-1,
+                 prefix=None, frequent=None, args=None, config=None):
         super(ValidationMonitor, self).__init__()
         self.val_func = val_func
         self.val_loader = val_loader
@@ -12,6 +13,10 @@ class ValidationMonitor(object):
         self.best_epoch = -1
         self.best_val = -1.0
         self.label_index_in_batch = label_index_in_batch
+        self.prefix = prefix
+        self.frequent = frequent
+        self.args = args
+        self.config = config
 
     def state_dict(self):
         return {'best_epoch': self.best_epoch,
@@ -24,7 +29,8 @@ class ValidationMonitor(object):
         self.best_val = state_dict['best_val']
 
     def __call__(self, epoch_num, net, optimizer, writer):
-        self.val_func(net, self.val_loader, self.metrics, self.label_index_in_batch)
+        self.val_func(net, self.val_loader, self.metrics, self.label_index_in_batch,
+                      epoch_num, self.prefix, self.frequent, self.args, self.config)
 
         name, value = self.metrics.get(end_of_epoch=True)
         s = "Epoch[%d] \tVal-" % (epoch_num)
