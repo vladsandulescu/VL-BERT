@@ -222,9 +222,17 @@ class HMDataset(Dataset):
                     in_data.append(idb)
             self.box_bank[box_file] = in_data
 
-            # if self.image_sets.__contains__('train'):
-            #     return np.random.choice(in_data, 16)
+            # if self.image_sets == ['train']:
+            #     # return np.random.choice(in_data, 16)
+            #     positives = [item for index, item in enumerate(in_data) if item['label'] == 1]
+            #     negatives = [item for index, item in enumerate(in_data) if item['label'] == 0]
+            #     # we know we have more negatives than positives, so balance it out
+            #     negatives = negatives[:(len(positives) + 1)]
+            #     in_data = positives + negatives
+            #     return in_data
             # else:
+            #     return in_data
+
             return in_data
 
     def __len__(self):
