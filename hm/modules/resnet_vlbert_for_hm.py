@@ -134,7 +134,7 @@ class ResNetVLBERT(Module):
         cls_loss = F.binary_cross_entropy_with_logits(
             logits,
             label.to(dtype=logits.dtype),
-            pos_weight=1.7272*torch.ones(len(label)).cuda().to(dtype=logits.dtype))
+            pos_weight=1.7272*torch.ones(len(label)).cuda().to(dtype=logits.dtype)) * label.size(0)
 
         outputs.update({'label_probs': torch.sigmoid(logits),
                         'label': label,
