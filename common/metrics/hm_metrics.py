@@ -28,7 +28,7 @@ class Accuracy(EvalMetric):
         with torch.no_grad():
             probs = outputs['label_probs']
             label = outputs['label']
-            self.sum_metric += float((probs.argmax(dim=1) == label).sum().item())
+            self.sum_metric += float(((probs > .5).to(dtype=label.dtype) == label).sum().item())
             self.num_inst += probs.shape[0]
 
 
@@ -60,5 +60,5 @@ class AUROC(EvalMetric):
     def update_eoe(self):
         with torch.no_grad():
             self.sum_metric = torch.tensor(roc_auc_score(self.outputs['label'],
-                                                          np.array(self.outputs['probs'])[:, 1]))
+                                                          np.array(self.outputs['probs'])))
             self.num_inst = torch.tensor(1.)

@@ -73,7 +73,7 @@ def test_net(args, config, ckpt_path=None, save_path=None, save_name=None):
 
     predicted_probs = np.array(predicted_probs)
     result = [{'id': id.replace('img/', '').replace('.png', ''), 'proba': np.round(proba, 4), 'label': label}
-              for id, proba, label in zip(image_ids, predicted_probs[:, 1], np.argmax(predicted_probs, axis=1))]
+              for id, proba, label in zip(image_ids, predicted_probs, (predicted_probs > .5).astype(int))]
 
     cfg_name = os.path.splitext(os.path.basename(args.cfg))[0]
     result_csv_path = os.path.join(save_path, '{}_hm2_{}.csv'.format(cfg_name if save_name is None else save_name,

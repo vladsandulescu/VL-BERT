@@ -48,7 +48,7 @@ def do_validation(net, val_loader, metrics, label_index_in_batch, epoch_num,
         result = [{'id': id.replace('img/', '').replace('.png', ''), 'proba': np.round(proba, 4),
                    'label': label, 'target': target}
                   for id, proba, label, target in
-                  zip(image_ids, predicted_probs[:, 1], np.argmax(predicted_probs, axis=1), targets)]
+                  zip(image_ids, predicted_probs, (predicted_probs > .5).astype(int), targets)]
 
         cfg_name = os.path.splitext(os.path.basename(args.cfg))[0]
         result_csv_path = os.path.join(save_path, '{}_hm2_{}.csv'.format(cfg_name if save_name is None else save_name,

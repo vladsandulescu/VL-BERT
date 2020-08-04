@@ -522,7 +522,7 @@ class VisualLinguisticBertClassificationHead(BaseModel):
 
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(config.hidden_size, 2)
+        self.classifier = nn.Linear(config.hidden_size, 1)
         self.apply(self.init_weights)
 
     def forward(self, pooled_rep):

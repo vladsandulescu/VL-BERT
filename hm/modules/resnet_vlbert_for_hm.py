@@ -126,12 +126,17 @@ class ResNetVLBERT(Module):
         outputs = {}
 
         # classifier
-        logits = self.final_mlp(pooled_rep)
+        logits = self.final_mlp(pooled_rep).squeeze(1)
 
         # loss
-        cls_loss = F.cross_entropy(logits, label)
+        # cls_loss = F.cross_entropy(logits, label)
+        # cls_loss = F.binary_cross_entropy_with_logits(logits.float(), torch.eye(2)[label].cuda()) * logits.size(1)
+        cls_loss = F.binary_cross_entropy_with_logits(
+            logits,
+            label.to(dtype=logits.dtype),
+            pos_weight=1.7272*torch.ones(len(label)).cuda().to(dtype=logits.dtype))
 
-        outputs.update({'label_probs': F.softmax(logits, dim=1),
+        outputs.update({'label_probs': torch.sigmoid(logits),
                         'label': label,
                         'cls_loss': cls_loss})
 
@@ -195,8 +200,8 @@ class ResNetVLBERT(Module):
         ###########################################
         outputs = {}
 
-        logits = self.final_mlp(pooled_rep)
+        logits = self.final_mlp(pooled_rep).squeeze(1)
 
-        outputs.update({'label_probs': F.softmax(logits, dim=1)})
+        outputs.update({'label_probs': torch.sigmoid(logits)})
 
         return outputs
