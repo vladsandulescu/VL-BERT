@@ -12,9 +12,10 @@ cd $HOME/playground/hmm/lib/VL-BERT
 pip install Cython
 pip install -r requirements.txt
 pip install torchvision==0.3.0
+pip install gdown
 
-sudo rm -r $HOME/playground/hmm/lib/VL-BERT/common/lib/roi_pooling/build/
-sudo rm $HOME/playground/hmm/lib/VL-BERT/common/lib/roi_pooling/C_ROIPooling.cpython-36m-x86_64-linux-gnu.so 
+rm -r $HOME/playground/hmm/lib/VL-BERT/common/lib/roi_pooling/build/
+rm $HOME/playground/hmm/lib/VL-BERT/common/lib/roi_pooling/C_ROIPooling.cpython-36m-x86_64-linux-gnu.so 
 
 cd $HOME/playground/hmm/lib/VL-BERT
 sh ./scripts/init.sh
