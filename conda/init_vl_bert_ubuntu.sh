@@ -13,6 +13,7 @@ pip install Cython
 pip install -r requirements.txt
 pip install torchvision==0.3.0
 pip install gdown
+conda install scikit-learn --yes
 
 rm -r $HOME/playground/hmm/lib/VL-BERT/common/lib/roi_pooling/build/
 rm $HOME/playground/hmm/lib/VL-BERT/common/lib/roi_pooling/C_ROIPooling.cpython-36m-x86_64-linux-gnu.so 
