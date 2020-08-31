@@ -26,6 +26,7 @@ from common.nlp.bert.optimization import AdamW, WarmupLinearSchedule
 from hm.data.build import make_dataloader, build_dataset, build_transforms
 from hm.modules import *
 from hm.function.val import do_validation
+from hm.function.test import test_net
 
 try:
     from apex import amp
@@ -214,33 +215,33 @@ def train_net(args, config):
             pretrain_state_dict = pretrain_state_dict_parsed
         smart_partial_load_model_state_dict(model, pretrain_state_dict)
 
-        # metrics
-        train_metrics_list = [hm_metrics.Accuracy(allreduce=args.dist,
-                                                   num_replicas=world_size if args.dist else 1)
-                              ]
-        val_metrics_list = [hm_metrics.Accuracy(allreduce=args.dist,
-                                                 num_replicas=world_size if args.dist else 1),
-                            hm_metrics.AUROC(allreduce=args.dist,
-                                                num_replicas=world_size if args.dist else 1)
-                            ]
+    # metrics
+    train_metrics_list = [hm_metrics.Accuracy(allreduce=args.dist,
+                                               num_replicas=world_size if args.dist else 1)
+                          ]
+    val_metrics_list = [hm_metrics.Accuracy(allreduce=args.dist,
+                                             num_replicas=world_size if args.dist else 1),
+                        hm_metrics.AUROC(allreduce=args.dist,
+                                            num_replicas=world_size if args.dist else 1)
+                        ]
 
-        for output_name, display_name in config.TRAIN.LOSS_LOGGERS:
-            train_metrics_list.append(
-                hm_metrics.LossLogger(output_name, display_name=display_name, allreduce=args.dist,
-                                       num_replicas=world_size if args.dist else 1))
+    for output_name, display_name in config.TRAIN.LOSS_LOGGERS:
+        train_metrics_list.append(
+            hm_metrics.LossLogger(output_name, display_name=display_name, allreduce=args.dist,
+                                   num_replicas=world_size if args.dist else 1))
 
-        train_metrics = CompositeEvalMetric()
-        val_metrics = CompositeEvalMetric()
-        for child_metric in train_metrics_list:
-            train_metrics.add(child_metric)
-        for child_metric in val_metrics_list:
-            val_metrics.add(child_metric)
+    train_metrics = CompositeEvalMetric()
+    val_metrics = CompositeEvalMetric()
+    for child_metric in train_metrics_list:
+        train_metrics.add(child_metric)
+    for child_metric in val_metrics_list:
+        val_metrics.add(child_metric)
 
     # epoch end callbacks
     epoch_end_callbacks = []
     if (rank is None) or (rank == 0):
         epoch_end_callbacks = [Checkpoint(model_prefix, config.CHECKPOINT_FREQUENT),
-                               TestMonitor(model_prefix, config.CHECKPOINT_FREQUENT, args, config)]
+                               TestMonitor(test_net, model_prefix, config.CHECKPOINT_FREQUENT, args, config)]
     validation_monitor = ValidationMonitor(do_validation, val_loader, val_metrics,
                                            host_metric_name='AUROC',
                                            label_index_in_batch=config.DATASET.LABEL_INDEX_IN_BATCH,
