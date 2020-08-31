@@ -33,10 +33,10 @@ DATASET:
 NETWORK:
   PARTIAL_PRETRAIN: "./model/pretrained_model/vl-bert-base-e2e.model"
   PARTIAL_PRETRAIN_PREFIX_CHANGES:
-    - "vlbert.mlm_head.predictions.transform->final_mlp.0"
-    - "module.vlbert.mlm_head.predictions.transform->module.final_mlp.0"
-    - "vlbert->vlbert"
-    - "module.vlbert->module.vlbert"
+  - "vlbert.mlm_head.predictions.transform->final_mlp.0"
+  - "module.vlbert.mlm_head.predictions.transform->module.final_mlp.0"
+  - "vlbert->vlbert"
+  - "module.vlbert->module.vlbert"
   IMAGE_NUM_LAYERS: 101
   IMAGE_C5_DILATED: true
   IMAGE_STRIDE_IN_1x1: true
@@ -83,7 +83,9 @@ NETWORK:
     visual_scale_object_init: 0.0
     visual_ln: true
 
-  CLASSIFIER_DROPOUT: 0.0
+  CLASSIFIER_TYPE: "1fc"
+  CLASSIFIER_HIDDEN_SIZE: 768
+  CLASSIFIER_DROPOUT: 0.1
 
 TRAIN:
   SHUFFLE: true
@@ -93,7 +95,7 @@ TRAIN:
   RESUME: false
   AUTO_RESUME: true
   BEGIN_EPOCH: 0
-  END_EPOCH: 20
+  END_EPOCH: 5
   OPTIMIZER: 'AdamW'
   CLIP_GRAD_NORM: 1.0
   GRAD_ACCUMULATE_STEPS: 2
