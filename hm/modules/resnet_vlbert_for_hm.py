@@ -3,9 +3,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from external.pytorch_pretrained_bert import BertTokenizer
+from external.pytorch_pretrained_bert.modeling import BertPredictionHeadTransform
 from common.module import Module
 from common.fast_rcnn import FastRCNN
-from common.visual_linguistic_bert import VisualLinguisticBert, VisualLinguisticBertClassificationHead
+from common.visual_linguistic_bert import VisualLinguisticBert
 from common.nlp.roberta import RobertaTokenizer
 
 BERT_WEIGHTS_NAME = 'pytorch_model.bin'
@@ -43,7 +44,23 @@ class ResNetVLBERT(Module):
         self.vlbert = VisualLinguisticBert(config.NETWORK.VLBERT,
                                          language_pretrained_model_path=language_pretrained_model_path)
 
-        self.final_mlp = VisualLinguisticBertClassificationHead(config.NETWORK.VLBERT)
+        dim = config.NETWORK.VLBERT.hidden_size
+        if config.NETWORK.CLASSIFIER_TYPE == "2fc":
+            self.final_mlp = torch.nn.Sequential(
+                torch.nn.Dropout(config.NETWORK.CLASSIFIER_DROPOUT, inplace=False),
+                torch.nn.Linear(dim, config.NETWORK.CLASSIFIER_HIDDEN_SIZE),
+                torch.nn.ReLU(inplace=True),
+                torch.nn.Dropout(config.NETWORK.CLASSIFIER_DROPOUT, inplace=False),
+                torch.nn.Linear(config.NETWORK.CLASSIFIER_HIDDEN_SIZE, 1),
+            )
+        elif config.NETWORK.CLASSIFIER_TYPE == "1fc":
+            self.final_mlp = torch.nn.Sequential(
+                torch.nn.Linear(dim, dim),
+                torch.nn.Dropout(config.NETWORK.CLASSIFIER_DROPOUT, inplace=False),
+                torch.nn.Linear(dim, 2)
+            )
+        else:
+            raise ValueError("Not support classifier type: {}!".format(config.NETWORK.CLASSIFIER_TYPE))
 
         # init weights
         self.init_weight()
@@ -129,14 +146,16 @@ class ResNetVLBERT(Module):
         logits = self.final_mlp(pooled_rep).squeeze(1)
 
         # loss
-        # cls_loss = F.cross_entropy(logits, label)
+        cls_loss = F.cross_entropy(logits, label)
         # cls_loss = F.binary_cross_entropy_with_logits(logits.float(), torch.eye(2)[label].cuda()) * logits.size(1)
-        cls_loss = F.binary_cross_entropy_with_logits(
-            logits,
-            label.to(dtype=logits.dtype),
-            pos_weight=1.7272*torch.ones(len(label)).cuda().to(dtype=logits.dtype)) * label.size(0)
+        # cls_loss = F.binary_cross_entropy_with_logits(
+        #     logits,
+        #     label.to(dtype=logits.dtype)) * label.size(0)
 
-        outputs.update({'label_probs': torch.sigmoid(logits),
+        # outputs.update({'label_probs': torch.sigmoid(logits),
+        #                 'label': label,
+        #                 'cls_loss': cls_loss})
+        outputs.update({'label_probs': F.softmax(logits, dim=1)[:, 1],
                         'label': label,
                         'cls_loss': cls_loss})
 
@@ -200,8 +219,9 @@ class ResNetVLBERT(Module):
         ###########################################
         outputs = {}
 
-        logits = self.final_mlp(pooled_rep).squeeze(1)
+        logits = self.final_mlp(pooled_rep)
 
-        outputs.update({'label_probs': torch.sigmoid(logits)})
+        # outputs.update({'label_probs': torch.sigmoid(logits)})
+        outputs.update({'label_probs': F.softmax(logits, dim=1)[:, 1]})
 
         return outputs

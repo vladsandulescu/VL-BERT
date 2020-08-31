@@ -514,24 +514,3 @@ class VisualLinguisticBertRelationshipPredictionHead(BaseModel):
         relationship_logits = self.caption_image_relationship(pooled_rep)
 
         return relationship_logits
-
-
-class VisualLinguisticBertClassificationHead(BaseModel):
-    def __init__(self, config):
-        super(VisualLinguisticBertClassificationHead, self).__init__(config)
-
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(config.hidden_size, 1)
-        self.apply(self.init_weights)
-
-    def forward(self, pooled_rep):
-        logits = self.dense(pooled_rep)
-        logits = self.dropout(logits)
-        logits = self.classifier(logits)
-
-        return logits
-
-
-
-
