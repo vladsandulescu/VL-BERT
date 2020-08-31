@@ -11,8 +11,8 @@ import torch.nn.functional as F
 from common.utils.load import smart_load_model_state_dict
 from common.trainer import to_cuda
 from common.utils.create_logger import create_logger
-from hm.data.build import make_dataloader
-from hm.modules import *
+from mmhs.data.build import make_dataloader
+from mmhs.modules import *
 
 
 @torch.no_grad()
@@ -65,18 +65,18 @@ def test_net(args, config, ckpt_path=None, save_path=None, save_name=None):
     for nbatch, batch in zip(trange(len(test_loader)), test_loader):
     # for nbatch, batch in tqdm(enumerate(test_loader)):
         bs = test_loader.batch_sampler.batch_size if test_loader.batch_sampler is not None else test_loader.batch_size
-        image_ids.extend([test_database[id]['img'] for id in range(cur_id, min(cur_id + bs, len(test_database)))])
+        image_ids.extend([test_database[id]['id'] for id in range(cur_id, min(cur_id + bs, len(test_database)))])
         batch = to_cuda(batch)
         output = model(*batch)
         predicted_probs.extend(output['label_probs'].detach().cpu().tolist())
         cur_id += bs
 
     predicted_probs = np.array(predicted_probs)
-    result = [{'id': id.replace('img/', '').replace('.png', ''), 'proba': np.round(proba, 4), 'label': label}
+    result = [{'id': id, 'proba': np.round(proba, 4), 'label': label}
               for id, proba, label in zip(image_ids, predicted_probs, (predicted_probs > .5).astype(int))]
 
     cfg_name = os.path.splitext(os.path.basename(args.cfg))[0]
-    result_csv_path = os.path.join(save_path, '{}_hm2_{}.csv'.format(cfg_name if save_name is None else save_name,
+    result_csv_path = os.path.join(save_path, '{}_mmhs_{}.csv'.format(cfg_name if save_name is None else save_name,
                                                                         config.DATASET.TEST_IMAGE_SET))
     with open(result_csv_path, 'w', newline='') as f:
         fieldnames = ['id', 'proba', 'label']

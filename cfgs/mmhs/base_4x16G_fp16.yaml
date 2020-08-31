@@ -1,25 +1,25 @@
 ---
 RNG_SEED: 12345
-OUTPUT_PATH: './output/vl-bert/hm'
+OUTPUT_PATH: './output/vl-bert/mmhs'
 MODULE: ResNetVLBERT
 GPUS: '0'
 LOG_FREQUENT: 100
 VAL_FREQUENT: 1
 CHECKPOINT_FREQUENT: 1
-MODEL_PREFIX: 'vl-bert_base_res101_hm'
-NUM_WORKERS_PER_GPU: 4
+MODEL_PREFIX: 'vl-bert_base_res101_mmhs'
+NUM_WORKERS_PER_GPU: 0
 SCALES:
 - 600
 - 1000
 
 DATASET:
-  DATASET: hm
+  DATASET: mmhs
   LABEL_INDEX_IN_BATCH: -1
   APPEND_INDEX: false
-  DATASET_PATH: './../../data'
+  DATASET_PATH: './../../data/MMHS150K/'
   ROOT_PATH: './'
-  TRAIN_IMAGE_SET: 'train+dev'
-  VAL_IMAGE_SET: 'dev'
+  TRAIN_IMAGE_SET: 'train'
+  VAL_IMAGE_SET: 'val'
   TEST_IMAGE_SET: 'test'
   ADD_IMAGE_AS_A_BOX: true
   ZIP_MODE: false
@@ -33,10 +33,10 @@ DATASET:
 NETWORK:
   PARTIAL_PRETRAIN: "./model/pretrained_model/vl-bert-base-e2e.model"
   PARTIAL_PRETRAIN_PREFIX_CHANGES:
-  - "vlbert.mlm_head.predictions.transform->final_mlp.0"
-  - "module.vlbert.mlm_head.predictions.transform->module.final_mlp.0"
-  - "vlbert->vlbert"
-  - "module.vlbert->module.vlbert"
+    - "vlbert.mlm_head.predictions.transform->final_mlp.0"
+    - "module.vlbert.mlm_head.predictions.transform->module.final_mlp.0"
+    - "vlbert->vlbert"
+    - "module.vlbert->module.vlbert"
   IMAGE_NUM_LAYERS: 101
   IMAGE_C5_DILATED: true
   IMAGE_STRIDE_IN_1x1: true
@@ -95,7 +95,7 @@ TRAIN:
   RESUME: false
   AUTO_RESUME: true
   BEGIN_EPOCH: 0
-  END_EPOCH: 5
+  END_EPOCH: 20
   OPTIMIZER: 'AdamW'
   CLIP_GRAD_NORM: 1.0
   GRAD_ACCUMULATE_STEPS: 2
