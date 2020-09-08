@@ -51,8 +51,9 @@ def do_validation(net, val_loader, metrics, label_index_in_batch, epoch_num,
                   zip(image_ids, predicted_probs, (predicted_probs > .5).astype(int), targets)]
 
         cfg_name = os.path.splitext(os.path.basename(args.cfg))[0]
-        result_csv_path = os.path.join(save_path, '{}_hm2_{}.csv'.format(cfg_name if save_name is None else save_name,
-                                                                         config.DATASET.VAL_IMAGE_SET))
+        rank = int(os.environ['RANK'] or 0)
+        result_csv_path = os.path.join(save_path, '{}_hm2_{}_rank_{}.csv'.format(cfg_name if save_name is None else save_name,
+                                                                         config.DATASET.VAL_IMAGE_SET, rank))
         with open(result_csv_path, 'w', newline='') as f:
             fieldnames = ['id', 'proba', 'label', 'target']
             writer = csv.DictWriter(f, fieldnames=fieldnames)
