@@ -35,7 +35,7 @@ class HMDataset(Dataset):
                  add_image_as_a_box=False, mask_size=(14, 14),
                  aspect_grouping=False, **kwargs):
         """
-        Visual Question Answering Dataset
+        HM Dataset
 
         :param image_set: image folder name
         :param root_path: root path to cache database loaded from annotation file
@@ -222,16 +222,18 @@ class HMDataset(Dataset):
                     in_data.append(idb)
             self.box_bank[box_file] = in_data
 
-            # if self.image_sets == ['train']:
-            #     # return np.random.choice(in_data, 16)
-            #     positives = [item for index, item in enumerate(in_data) if item['label'] == 1]
-            #     negatives = [item for index, item in enumerate(in_data) if item['label'] == 0]
-            #     # we know we have more negatives than positives, so balance it out
-            #     negatives = negatives[:(len(positives) + 1)]
-            #     in_data = positives + negatives
-            #     return in_data
-            # else:
-            #     return in_data
+            return in_data
+
+    def __len__(self):
+        return len(self.database)
+
+    def _load_image(self, path):
+        return Image.open(path).convert('RGB')
+
+    def _load_json(self, path):
+        with open(path, 'r') as f:
+            return json.load(f)
+
 
             return in_data
 
