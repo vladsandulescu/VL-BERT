@@ -143,7 +143,8 @@ class ResNetVLBERT(Module):
         outputs = {}
 
         # classifier
-        logits = self.final_mlp(pooled_rep).squeeze(1)
+        # logits = self.final_mlp(pooled_rep).squeeze(1)
+        logits = self.final_mlp(pooled_rep)
 
         # loss
         cls_loss = F.cross_entropy(logits, label)
