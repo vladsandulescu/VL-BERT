@@ -3,10 +3,10 @@ import torch.utils.data
 from .datasets import *
 from . import samplers
 from .transforms.build import build_transforms
-from .collate_batch import BatchCollator
+from .collate_batch import BatchCollator, BatchPairedCollator
 import pprint
 
-DATASET_CATALOGS = {'hm': HMDataset}
+DATASET_CATALOGS = {'hm': HMDataset, 'hm-triplet': HMTripletDataset, 'hm-paired': HMPairedDataset}
 
 
 def build_dataset(dataset_name, *args, **kwargs):
@@ -86,7 +86,10 @@ def make_dataloader(cfg, dataset=None, mode='train', distributed=False, num_repl
 
     sampler = make_data_sampler(dataset, shuffle, distributed, num_replicas, rank)
     batch_sampler = make_batch_data_sampler(dataset, sampler, aspect_grouping, batch_size)
-    collator = BatchCollator(dataset=dataset, append_ind=cfg.DATASET.APPEND_INDEX)
+    if 'paired' in cfg.DATASET.DATASET:
+        collator = BatchPairedCollator(dataset=dataset, append_ind=cfg.DATASET.APPEND_INDEX)
+    else:
+        collator = BatchCollator(dataset=dataset, append_ind=cfg.DATASET.APPEND_INDEX)
 
     dataloader = torch.utils.data.DataLoader(dataset=dataset,
                                              batch_sampler=batch_sampler,

@@ -101,7 +101,8 @@ class VisualLinguisticBert(BaseModel):
                 object_mask,
                 output_all_encoded_layers=True,
                 output_text_and_object_separately=False,
-                output_attention_probs=False):
+                output_attention_probs=False,
+                output_new_attention_mask=False):
 
         # get seamless concatenate embeddings and mask
         embedding_output, attention_mask, text_mask_new, object_mask_new = self.embedding(text_input_ids,
@@ -168,7 +169,10 @@ class VisualLinguisticBert(BaseModel):
             if output_attention_probs:
                 return encoded_layers, pooled_output, attention_probs
             else:
-                return encoded_layers, pooled_output
+                if output_new_attention_mask:
+                    return encoded_layers, attention_mask
+                else:
+                    return encoded_layers, pooled_output
 
     def embedding(self,
                   text_input_ids,

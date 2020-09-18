@@ -1,2 +1,2 @@
-from .hm import HMDataset
+from .hm import HMDataset, HMTripletDataset, HMPairedDataset
 

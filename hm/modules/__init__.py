@@ -1,3 +1,1 @@
-from .resnet_vlbert_for_hm import ResNetVLBERT
-
-
+from .resnet_vlbert_for_hm import ResNetVLBERT, ResNetVLBERTPaired, ResNetVLBERTPairedAttn
