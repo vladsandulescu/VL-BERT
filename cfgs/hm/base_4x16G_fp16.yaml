@@ -1,8 +1,8 @@
 ---
 RNG_SEED: 12345
-OUTPUT_PATH: './output/vl-bert/hm'
+OUTPUT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT/output/vl-bert/hm'
 MODULE: ResNetVLBERT
-GPUS: '0'
+GPUS: '0,1,2,3'
 LOG_FREQUENT: 100
 VAL_FREQUENT: 1
 CHECKPOINT_FREQUENT: 1
@@ -16,8 +16,8 @@ DATASET:
   DATASET: hm
   LABEL_INDEX_IN_BATCH: -1
   APPEND_INDEX: false
-  DATASET_PATH: './../../data'
-  ROOT_PATH: './'
+  DATASET_PATH: '/work1/paupo/playground/hmm/data'
+  ROOT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT'
   TRAIN_IMAGE_SET: 'train+dev'
   VAL_IMAGE_SET: 'dev'
   TEST_IMAGE_SET: 'test'
@@ -31,7 +31,7 @@ DATASET:
 
 
 NETWORK:
-  PARTIAL_PRETRAIN: "./model/pretrained_model/vl-bert-base-e2e.model"
+  PARTIAL_PRETRAIN: "/work1/paupo/playground/hmm/lib/VL-BERT/model/pretrained_model/vl-bert-base-e2e.model"
   PARTIAL_PRETRAIN_PREFIX_CHANGES:
   - "vlbert.mlm_head.predictions.transform->final_mlp.0"
   - "module.vlbert.mlm_head.predictions.transform->module.final_mlp.0"
@@ -49,7 +49,7 @@ NETWORK:
   - 1.0
   - 1.0
   IMAGE_FEAT_PRECOMPUTED: false
-  IMAGE_PRETRAINED: './model/pretrained_model/resnet101-pt-vgbua'
+  IMAGE_PRETRAINED: '/work1/paupo/playground/hmm/lib/VL-BERT/model/pretrained_model/resnet101-pt-vgbua'
   IMAGE_PRETRAINED_EPOCH: 0
   IMAGE_FROZEN_BACKBONE_STAGES:
   - 1
@@ -58,7 +58,7 @@ NETWORK:
   IMAGE_FINAL_DIM: 768
   IMAGE_SEMANTIC: false
   OUTPUT_CONV5: false
-  BERT_MODEL_NAME: './model/pretrained_model/bert-base-uncased'
+  BERT_MODEL_NAME: '/work1/paupo/playground/hmm/lib/VL-BERT/model/pretrained_model/bert-base-uncased'
   BERT_PRETRAINED: ''
   BERT_PRETRAINED_EPOCH: 0
   BERT_FROZEN: false
