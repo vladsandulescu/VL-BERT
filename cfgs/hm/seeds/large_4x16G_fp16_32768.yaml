@@ -1,7 +1,7 @@
 ---
-RNG_SEED: 12345
-OUTPUT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT/ph2_output_pa/vl-bert/hm'
-MODULE: ResNetVLBERTPairedAttn
+RNG_SEED: 32768
+OUTPUT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT/ph2_output_32768/vl-bert/hm'
+MODULE: ResNetVLBERT
 GPUS: '0,1,2,3'
 LOG_FREQUENT: 100
 VAL_FREQUENT: 1
@@ -13,12 +13,12 @@ SCALES:
 - 1000
 
 DATASET:
-  DATASET: hm-paired
+  DATASET: hm
   LABEL_INDEX_IN_BATCH: -1
   APPEND_INDEX: false
   DATASET_PATH: '/work1/paupo/playground/hmm/data_2'
   ROOT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT'
-  TRAIN_IMAGE_SET: 'train'
+  TRAIN_IMAGE_SET: 'train+dev'
   VAL_IMAGE_SET: 'dev'
   TEST_IMAGE_SET: 'test'
   ADD_IMAGE_AS_A_BOX: true
@@ -83,7 +83,7 @@ NETWORK:
     visual_scale_object_init: 0.0
     visual_ln: true
 
-  CLASSIFIER_TYPE: "1fc-paired-attn"
+  CLASSIFIER_TYPE: "1fc"
   CLASSIFIER_HIDDEN_SIZE: 1024
   CLASSIFIER_DROPOUT: 0.1
 

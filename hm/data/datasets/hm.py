@@ -57,10 +57,18 @@ class HMDataset(Dataset):
 
         assert not cache_mode, 'currently not support cache mode!'
 
+        # # Phase 1
+        # precomputed_boxes = {
+        #     "train": "train_batch.tsv",
+        #     "dev": "dev_batch.tsv",
+        #     "test": "test_batch.tsv",
+        # }
+
+        # Phase 2
         precomputed_boxes = {
-            'train': "train_batch.tsv",
-            "dev": "dev_batch.tsv",
-            "test": "test_batch.tsv",
+            "train": "data_train_d2_10-100.tsv",
+            "dev": "data_dev_seen_unseen_d2_10-100.tsv",
+            "test": "data_test_unseen_d2_10-100.tsv",
         }
             
         self.boxes = boxes
@@ -498,12 +506,22 @@ class HMPairedDataset(Dataset):
 
         assert not cache_mode, 'currently not support cache mode!'
 
+        # # Phase 1
+        # precomputed_boxes = {
+        #     "train": "train_batch.tsv",
+        #     "dev": "dev_batch.tsv",
+        #     "test": "test_batch.tsv",
+        # }
+        # df_captions = pd.read_csv(os.path.join(data_path, 'im2txt/df_phase_1.csv'))
+
+        # Phase 2
         precomputed_boxes = {
-            'train': "train_batch.tsv",
-            "dev": "dev_batch.tsv",
-            "test": "test_batch.tsv",
+            "train": "data_train_d2_10-100.tsv",
+            "dev": "data_dev_seen_unseen_d2_10-100.tsv",
+            "test": "data_test_unseen_d2_10-100.tsv",
         }
-        df_captions = pd.read_csv(os.path.join(data_path, 'im2txt/df.csv'))
+        df_captions = pd.read_csv(os.path.join(data_path, 'im2txt/df_phase_2.csv'))
+
         df_captions['id'] = df_captions['id'].str.replace(os.path.join(data_path, 'img/'), '').str.replace(
             '.png', '')
         df_captions['caption'] = df_captions['cap0']
