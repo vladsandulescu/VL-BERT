@@ -1,6 +1,6 @@
 ---
 RNG_SEED: 12345
-OUTPUT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT/output_pa/vl-bert/hm'
+OUTPUT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT/ph2_output_pa/vl-bert/hm'
 MODULE: ResNetVLBERTPairedAttn
 GPUS: '0,1,2,3'
 LOG_FREQUENT: 100
@@ -16,9 +16,9 @@ DATASET:
   DATASET: hm-paired
   LABEL_INDEX_IN_BATCH: -1
   APPEND_INDEX: false
-  DATASET_PATH: '/work1/paupo/playground/hmm/data'
+  DATASET_PATH: '/work1/paupo/playground/hmm/data_2'
   ROOT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT'
-  TRAIN_IMAGE_SET: 'train+dev'
+  TRAIN_IMAGE_SET: 'train'
   VAL_IMAGE_SET: 'dev'
   TEST_IMAGE_SET: 'test'
   ADD_IMAGE_AS_A_BOX: true
