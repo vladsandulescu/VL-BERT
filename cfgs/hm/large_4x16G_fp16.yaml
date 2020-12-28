@@ -1,6 +1,6 @@
 ---
 RNG_SEED: 12345
-OUTPUT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT/ph2_output/vl-bert/hm'
+OUTPUT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT/ph1_output/vl-bert/hm'
 MODULE: ResNetVLBERT
 GPUS: '0,1,2,3'
 LOG_FREQUENT: 100
@@ -16,7 +16,7 @@ DATASET:
   DATASET: hm
   LABEL_INDEX_IN_BATCH: -1
   APPEND_INDEX: false
-  DATASET_PATH: '/work1/paupo/playground/hmm/data_2'
+  DATASET_PATH: '/work1/paupo/playground/hmm/data_1'
   ROOT_PATH: '/work1/paupo/playground/hmm/lib/VL-BERT'
   TRAIN_IMAGE_SET: 'train+dev'
   VAL_IMAGE_SET: 'dev'
